@@ -5,24 +5,31 @@ const Button = (props) => (
   <button onClick={props.handleClick}>{props.text}</button>
 );
 
+const Statistic = (props) => (
+  <table>
+    <tbody>
+      <tr>
+        <td>{props.text}</td>
+        <td>{props.value}</td>
+      </tr>
+    </tbody>
+  </table>
+);
+
 const Statistics = ({ good, neutral, bad, total, average, percentage }) => {
   if (!total) {
-    return (
-      <>
-        <h2>statistics</h2>
-        <p>No feedback given</p>
-      </>
-    );
+    return <Statistic text="No feedback given" />;
   }
   return (
     <>
-      <h2>statistics</h2>
-      <p>good {good}</p>
-      <p>neutral {neutral}</p>
-      <p>bad {bad}</p>
-      <p>all {total}</p>
-      <p>average {average}</p>
-      <p>positive {percentage} %</p>
+      <Statistic text="good" value={good} />
+      <Statistic text="neutral" value={neutral} />
+      <Statistic text="bad" value={bad} />
+      <Statistic text="total" value={total} />
+      <Statistic text="average" value={average} />
+      <Statistic text="percentage" value={percentage}>
+        %
+      </Statistic>
     </>
   );
 };
@@ -60,15 +67,15 @@ const App = () => {
   };
 
   const handleAverage = () => {
-    //getting the current difference of good and bad
     //BUG clicking good and then bad leads to a positive average
     const difference = good - bad;
     setAverage(difference / 2);
   };
 
   const handlePercentage = () => {
-    //BUG returns NaN on some results
-    const newPercentage = (good / total) * 100;
+    //BUG returns NaN on some results, converting for a string for showcasing
+    let newPercentage = (good / total) * 100;
+    if (isNaN(newPercentage)) newPercentage = "NaN";
     setPercentage(newPercentage);
   };
 
@@ -80,6 +87,7 @@ const App = () => {
         <Button handleClick={handleNeutral} text="neutral" />
         <Button handleClick={handleBad} text="bad" />
       </div>
+      <h2>statistics</h2>
       <Statistics {...{ good, neutral, bad, total, average, percentage }} />
     </>
   );
