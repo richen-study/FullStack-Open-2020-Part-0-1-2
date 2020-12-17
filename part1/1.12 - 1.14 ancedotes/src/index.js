@@ -84,7 +84,7 @@ const App = ({ anecdotes }) => {
 
   return (
     <>
-      <h2>Ancedotes</h2>
+      <h2>Anecdotes</h2>
       <div>{selected}</div>
       <div>has {vote[selected]} votes</div>
       <Button handleClick={handleSelected} label="Change Anecdote" />
