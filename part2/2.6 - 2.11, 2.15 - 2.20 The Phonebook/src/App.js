@@ -1,5 +1,14 @@
 import React, { useState, useEffect } from "react";
 import personService from "./services/persons";
+import "./index.css";
+
+const Notification = ({ message }) => {
+  if (message === null) {
+    return null;
+  }
+
+  return <div className="error">{message}</div>;
+};
 
 const Filter = ({ search, handleSearchChange }) => {
   return (
@@ -59,6 +68,7 @@ const App = () => {
   const [newNumber, setNewNumber] = useState("");
   const [showAll, setShowAll] = useState(true);
   const [search, setSearch] = useState("");
+  const [errorMessage, setErrorMessage] = useState(null);
 
   useEffect(() => {
     personService.getAll().then((response) => {
@@ -89,6 +99,20 @@ const App = () => {
             setPersons(newPersons);
             setNewNumber("");
             setNewNumber("");
+
+            setErrorMessage(`${personToUpdate.name} information updated...`);
+            setTimeout(() => {
+              setErrorMessage(null);
+            }, 3000);
+          })
+          .catch((err) => {
+            alert(`${personToUpdate.name} already got deleted in the server`);
+            const personsUpdated = persons.filter(
+              (person) => person.id !== personToUpdate.id
+            );
+            setPersons(personsUpdated);
+            setNewName("");
+            setNewNumber("");
           });
       }
       return;
@@ -100,6 +124,10 @@ const App = () => {
         setPersons(persons.concat(response));
         setNewName("");
         setNewNumber("");
+        setErrorMessage(`${response.name} added!`);
+        setTimeout(() => {
+          setErrorMessage(null);
+        }, 3000);
         return;
       })
       .catch((err) => console.log(err));
@@ -144,6 +172,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={errorMessage} />
       <Filter {...{ search, handleSearchChange }} />
       <h2>Add a New Person</h2>
       <PersonForm
